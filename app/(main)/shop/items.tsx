@@ -13,7 +13,6 @@ type Props = {
   hasActiveSubscription: boolean
 }
 
-
 const ShopItems = ({
   hearts,
   points,
