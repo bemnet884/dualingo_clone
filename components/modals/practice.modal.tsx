@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 
 const PracticeModal = () => {
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, open } = usePracticeModal();
+  const { isOpen, close } = usePracticeModal();
 
   useEffect(() => setIsClient(true), []);
 

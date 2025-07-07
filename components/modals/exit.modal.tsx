@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 const ExitModal = () => {
   const router = useRouter();
   const [isClient, setIsClient] = useState(false);
-  const { isOpen, close, open } = useExitModal();
+  const { isOpen, close } = useExitModal();
 
   useEffect(() => setIsClient(true), []);
 

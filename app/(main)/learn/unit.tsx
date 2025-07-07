@@ -12,7 +12,7 @@ type Props = {
   activeLessonPercentage: number
 }
 
-const Unit = ({ id, title, description, order, lessons, activeLesson, activeLessonPercentage }: Props) => {
+const Unit = ({ title, description, lessons, activeLesson, activeLessonPercentage }: Props) => {
   return (
     <>
       <UnitBanner title={title} description={description} />

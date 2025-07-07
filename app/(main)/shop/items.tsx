@@ -3,7 +3,6 @@
 import { refillHearts } from "@/actions/user-progress"
 import { Button } from "@/components/ui/button"
 import { POINTS_TO_REFILL } from "@/constants"
-import { point } from "drizzle-orm/pg-core"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"

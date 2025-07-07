@@ -18,7 +18,6 @@ type Props = {
 
 }
 const Card = ({
-  id,
   text,
   imageSrc,
   shortcut,
