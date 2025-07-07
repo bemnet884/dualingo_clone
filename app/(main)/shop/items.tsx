@@ -1,7 +1,6 @@
 'use client'
 
 import { refillHearts } from "@/actions/user-progress"
-import { createStripeUrl } from "@/actions/user-subscription"
 import { Button } from "@/components/ui/button"
 import { POINTS_TO_REFILL } from "@/constants"
 import { point } from "drizzle-orm/pg-core"
@@ -33,16 +32,14 @@ const ShopItems = ({
   }
 
   const onUpgrade = () => {
+    if (pending) return;
+
     startTransition(() => {
-      createStripeUrl()
-        .then((response) => {
-          if (response.data) {
-            window.location.href = response.data;
-          }
-        })
-        .catch(() => toast.error("Something went wrong from shopitems stripe"))
-    })
+      // Just redirect to the pricing page
+      window.location.href = "/pricing";
+    });
   }
+
   return (
     <ul className="w-full">
       <div className="flex items-center w-full p-4 gap-x-4 border-t-4">
