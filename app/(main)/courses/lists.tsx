@@ -24,9 +24,12 @@ const Lists = ({ courses, activeCourseId }: Props) => {
     }
 
     startTransition(() => {
-      upsertUserProgress(id).catch(() => toast.error("Something Went Wrong"))
+      upsertUserProgress(id)
+        .then(() => router.push('/learn'))
+        .catch(() => toast.error("Something Went Wrong"))
     })
   }
+
 
   console.log('activeCourseId:', activeCourseId);
   console.log('course ids:', courses.map(c => c.id));

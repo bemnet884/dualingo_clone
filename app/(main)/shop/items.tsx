@@ -33,7 +33,6 @@ const ShopItems = ({
     if (pending) return;
 
     startTransition(() => {
-      // Just redirect to the pricing page
       window.location.href = "/pricing";
     });
   }
