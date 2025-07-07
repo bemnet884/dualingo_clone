@@ -148,11 +148,9 @@ const Quiz = ({
     }
   }
 
-  /** 
-   *   if (!challenge) {
+  if (!challenge) {
 
     return (
-
       <>
         {finishAudio}
         <Conffeti
@@ -198,9 +196,6 @@ const Quiz = ({
       </>
     )
   }
-   * 
-  */
-
 
   const title = challenge.type === "ASSIST"
     ? "Select the correct meaning"
@@ -209,58 +204,8 @@ const Quiz = ({
 
   return (
     <>
-      {!challenge
-        ? (
-          <>
-            {finishAudio}
-
-            <Conffeti
-              width={width}
-              height={height}
-              recycle={false}
-              numberOfPieces={500}
-              tweenDuration={10000}
-            />
-            <div className="flex flex-col gap-y-4 lg:gap-y-8 max-w-lg mx-auto text-center items-center justify-center h-full">
-              <Image
-                src='/finish.svg'
-                alt="Finish"
-                height={100}
-                width={100}
-                className="hidden lg:block"
-              />
-              <Image
-                src='/finish.svg'
-                alt="Finish"
-                height={50}
-                width={50}
-                className="block lg:hidden"
-              />
-              <h1 className="text-xl text-neutral-700 font-bold lg:text-3xl">
-                Great job! <br /> You&apos;ve completed the lesson!
-              </h1>
-              <div className="flex items-center w-full gap-x-4">
-                <ResultCard
-                  variant="points"
-                  value={challenges.length * 10}
-                />
-                <ResultCard
-                  variant="hearts"
-                  value={hearts}
-                />
-              </div>
-            </div>
-            <Footer
-              lessonId={lessonId}
-              status={"completed"}
-              onCheck={() => router.push('/learn')} />
-
-          </>
-        )
-        : (
-          <>
-            {incorrectAudio}
-            {correctAudio}
+      {incorrectAudio}
+      {correctAudio}
 
             <Header
               hearts={hearts}
@@ -292,10 +237,7 @@ const Quiz = ({
               disabled={pending || !selectedOption}
               status={status}
               onCheck={onContinue}
-            />
-          </>
-        )}
-
+      />
     </>
   )
 }
