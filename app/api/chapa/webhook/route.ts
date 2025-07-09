@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    const data = body.data;
+    const data = body;
 
     if (!data || !data.tx_ref || !data.status || !data.updated_at) {
       console.error("❌ Missing required payment fields in data:", data);
