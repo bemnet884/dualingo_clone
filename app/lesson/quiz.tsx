@@ -1,6 +1,6 @@
 'use client'
 
-import { challengeOptions, challenges } from "@/db/schema"
+import { challengeOptions, challenges, userSubscription } from "@/db/schema"
 import { useState, useTransition } from "react";
 import Conffeti from 'react-confetti'
 import Header from "./header";
@@ -18,22 +18,22 @@ import useHeartsModal from "@/store/use-hearts-modal";
 import usePracticeModal from "@/store/use-practice-modal";
 
 type Props = {
-  initialLessonId: number;
+  initialLessonId: number,
   initialLessonChallenges: (typeof challenges.$inferSelect & {
     completed: boolean;
     challengeOptions: typeof challengeOptions.$inferSelect[];
-  })[];
-  initialLessonHearts: number;
-  initialLessonPercentage: number;
-  hasActiveSubscription: boolean;
-};
+  })[],
+  initialLessonHearts: number,
+  initialLessonPercentage: number,
+  userSubscription: typeof userSubscription.$inferSelect & { isActive: boolean } | null
+}
 
 const Quiz = ({
   initialLessonId,
   initialLessonChallenges,
   initialLessonHearts,
   initialLessonPercentage,
-  hasActiveSubscription }: Props) => {
+  userSubscription }: Props) => {
 
   const { open: openHeartsModal } = useHeartsModal();
   const { open: openPracticeModal } = usePracticeModal();
@@ -151,6 +151,7 @@ const Quiz = ({
   if (!challenge) {
 
     return (
+
       <>
         {finishAudio}
         <Conffeti
@@ -197,6 +198,7 @@ const Quiz = ({
     )
   }
 
+
   const title = challenge.type === "ASSIST"
     ? "Select the correct meaning"
     : challenge.question
@@ -204,13 +206,12 @@ const Quiz = ({
 
   return (
     <>
-      {incorrectAudio}
       {correctAudio}
-
+      {incorrectAudio}
             <Header
               hearts={hearts}
               percentage={percentage}
-              hasActiveSubscription={hasActiveSubscription}
+        hasActiveSubscription={!!userSubscription?.isActive}
             />
             <div className="flex-1">
               <div className="h-full flex items-center justify-center">

@@ -2,7 +2,7 @@
 
 import { POINTS_TO_REFILL } from "@/constants";
 import { db } from "@/db/drizzle";
-import { getCourseById, getUserProgress } from "@/db/queries";
+import { getCourseById, getUserProgress, getUserSubscription } from "@/db/queries";
 import { challengeProgress, challenges, userProgress } from "@/db/schema";
 import { auth, currentUser } from "@clerk/nextjs/server"
 import { and, eq } from "drizzle-orm";
@@ -55,12 +55,12 @@ export const upsertUserProgress = async (courseId: number) => {
 };
 
 export const reduceHearts = async (challengeId: number) => {
-  const { userId, has } = await auth();
+  const { userId } = await auth();
 
   if (!userId) { throw new Error("Unauthorized!") };
 
   const currentUserProgress = await getUserProgress();
-  const hasProPlan = await has({ plan: "pro" }); // replace "pro" with your real plan ID
+  const userSubscription = await getUserSubscription();
 
     const challenge = await db.query.challenges.findFirst({
     where: eq(challenges.id, challengeId)
@@ -87,7 +87,7 @@ export const reduceHearts = async (challengeId: number) => {
     throw new Error("User progress not found!")
   }
 
-  if (hasProPlan) {
+  if (userSubscription?.isActive) {
     return { error: "subscription" }
   }
 

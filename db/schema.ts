@@ -108,13 +108,12 @@ export const userProgressRelation = relations(userProgress, (({one }) => ({
   })
 })))
 
-/*
-export const userSubscription = pgTable('user_subscription', {
+
+export const userSubscription = pgTable("user_subscription", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull().unique(),
-  stripeCustomerId: text("stripe_customer_id").notNull().unique(),
-  stripeSubscriptionId: text("stripe_subscription_id").notNull().unique(),
-  stripePriceId: text("stripe_price_id").notNull(),
-  stripeCurrentPeriodEnd: timestamp("stripe_current_period_end").notNull(),
-})
-*/
+  chapaTxRef: text("chapa_tx_ref").notNull().unique(), // unique transaction ref
+  chapaPaymentStatus: text("chapa_payment_status").notNull(), // e.g., "paid", "pending"
+  chapaPaymentTime: timestamp("chapa_payment_time").notNull(), // time Chapa confirmed payment
+});
+

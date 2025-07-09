@@ -8,6 +8,7 @@ type Props = {
   percentage: number,
   hasActiveSubscription: boolean
 }
+
 const Header = ({
   hearts,
   percentage,

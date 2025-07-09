@@ -1,8 +1,10 @@
 'use client'
 
 import { refillHearts } from "@/actions/user-progress"
+import { createChapaUrl } from "@/actions/user-subscription"
 import { Button } from "@/components/ui/button"
 import { POINTS_TO_REFILL } from "@/constants"
+import { point } from "drizzle-orm/pg-core"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"
@@ -12,6 +14,7 @@ type Props = {
   points: number,
   hasActiveSubscription: boolean
 }
+
 
 const ShopItems = ({
   hearts,
@@ -30,12 +33,18 @@ const ShopItems = ({
   }
 
   const onUpgrade = () => {
-    if (pending) return;
-
     startTransition(() => {
-      window.location.href = "/pricing";
+      createChapaUrl()
+        .then((checkoutUrl) => {
+          if (checkoutUrl) {
+            toast.success("Redirecting to Chapa...");
+            window.location.href = checkoutUrl;
+          }
+        })
+        .catch(() => toast.error("Something went wrong from shopitems (chapa)"));
     });
-  }
+  };
+
 
   return (
     <ul className="w-full">

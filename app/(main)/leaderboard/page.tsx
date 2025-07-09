@@ -1,7 +1,7 @@
 import FeedWrapper from '@/components/feed-wrapper'
 import StickyWrapper from '@/components/stickey-wrapper'
 import UserProgress from '@/components/user-progress'
-import { getTopTenUsers, getUserProgress } from '@/db/queries'
+import { getTopTenUsers, getUserProgress, getUserSubscription } from '@/db/queries'
 import Image from 'next/image'
 import { redirect } from 'next/navigation'
 import React from 'react'
@@ -9,33 +9,33 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import Promo from '@/components/promo'
 import Quests from '@/components/quests'
-import { auth } from '@clerk/nextjs/server'
 
 const Leaderboard = async () => {
-  const userProgressData = getUserProgress();
-  const leaderboardData = getTopTenUsers();
-  const { has } = await auth();
-  const hasProPlan = await has({ plan: "pro" }); // replace with your actual plan ID
 
-  const [userProgress, leaderboard] = await Promise.all([
-    userProgressData,
-    leaderboardData
+  const [userProgress, userSubscription, leaderboard] = await Promise.all([
+    getUserProgress(),
+    getUserSubscription(),
+    getTopTenUsers()
   ]);
 
   if (!userProgress || !userProgress.activeCourseId) {
     redirect("/courses");
   }
 
+  const activeCourse = userProgress.activeCourseId;
+
+  const isPro = !!userSubscription?.isActive;
+
   return (
     <div className='flex flex-row-reverse gap-[48px] px-6'>
       <StickyWrapper>
         <UserProgress
-          activeCourse={userProgress.activeCourseId}
+          activeCourse={activeCourse}
           hearts={userProgress.hearts}
           points={userProgress.points}
-          hasActiveSubscription={hasProPlan}
+          hasActiveSubscription={isPro}
         />
-        {!hasProPlan && <Promo />}
+        {!isPro && <Promo />}
         <Quests points={userProgress.points} />
       </StickyWrapper>
 
@@ -47,36 +47,31 @@ const Leaderboard = async () => {
             height={90}
             width={90}
           />
-          <h1 className='text-center font-bold text-neutral-800 text-2xl my-6'>
-            Leaderboard
-          </h1>
+          <h1 className='text-center font-bold text-neutral-800 text-2xl my-6'>Leaderboard</h1>
           <p className='text-muted-foreground text-center text-lg mb-6'>
             See where you stand among other learners in the community.
           </p>
           <Separator className='mb-4 h-0.5 rounded-full' />
-
-          {leaderboard.map((userProgress, index) => (
+          {leaderboard.map((user, index) => (
             <div
               className='flex items-center w-full p-2 px-4 rounded-xl hover:bg-gray-200/50'
-              key={userProgress.userId}
+              key={user.userId}
             >
               <p className='text-bold text-lime-700 mr-4'>{index + 1}</p>
               <Avatar className='border bg-green-500 h-12 w-12 ml-3 mr-6'>
                 <AvatarImage
                   className='object-cover'
-                  src={userProgress.userImageSrc}
+                  src={user.userImageSrc}
                 />
               </Avatar>
-              <p className='font-bold text-neutral-800 flex-1'>
-                {userProgress.userName}
-              </p>
-              <p className='text-muted-foreground'>{userProgress.points} XP</p>
+              <p className='font-bold text-neutral-800 flex-1'>{user.userName}</p>
+              <p className='text-muted-foreground'>{user.points} XP</p>
             </div>
           ))}
         </div>
       </FeedWrapper>
     </div>
-  );
-};
+  )
+}
 
-export default Leaderboard;
+export default Leaderboard
