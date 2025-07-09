@@ -1,5 +1,3 @@
-// app/api/chapa/webhook/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 import { userSubscription } from "@/db/schema";
 import { db } from "@/db/drizzle";
@@ -9,73 +7,82 @@ export async function POST(req: NextRequest) {
   try {
     const secret = process.env.CHAPA_WEBHOOK_SECRET;
     if (!secret) {
-      console.error("Missing CHAPA_WEBHOOK_SECRET in env");
+      console.error("❌ Missing CHAPA_WEBHOOK_SECRET in env");
       return NextResponse.json({ error: "Server misconfiguration" }, { status: 500 });
     }
 
-    // Get raw request body as text for signature verification
-    const bodyText = await req.text();
+    // Read raw body as string
+    const rawBody = await req.text();
 
-    // Get signature sent by Chapa
+    // Verify signature
     const signature = req.headers.get("x-chapa-signature");
     if (!signature) {
-      return NextResponse.json({ error: "Missing signature header" }, { status: 401 });
+      console.warn("❌ Missing signature header");
+      return NextResponse.json({ error: "Missing signature" }, { status: 401 });
     }
 
-    // Compute HMAC SHA256 digest of the raw body using your secret
     const expectedSignature = crypto
       .createHmac("sha256", secret)
-      .update(bodyText)
+      .update(rawBody)
       .digest("hex");
 
-    // Compare signatures (timing-safe compare recommended, simplified here)
     if (signature !== expectedSignature) {
+      console.warn("❌ Signature mismatch");
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
-    // Parse JSON body after verifying signature
-    const body = JSON.parse(bodyText);
+    // Parse verified JSON
+    const body = JSON.parse(rawBody);
+    console.log("🔔 Webhook received:", JSON.stringify(body, null, 2));
 
-    if (body.event === "charge.success") {
-      const data = body.data;
-      const txRef = data.tx_ref;
-      const status = data.status; // expect "success"
-      const paidAt = new Date(data.updated_at);
+    if (body.event !== "charge.success") {
+      console.log("ℹ️ Ignored event:", body.event);
+      return NextResponse.json({ received: true });
+    }
 
-      // Extract userId from tx_ref format: "tx-<userId>-<timestamp>"
-      const userId = txRef?.split("-")[1];
+    const data = body.data;
 
-      if (!userId) {
-        return NextResponse.json({ error: "Missing userId in tx_ref" }, { status: 400 });
-      }
+    if (!data || !data.tx_ref || !data.status || !data.updated_at) {
+      console.error("❌ Missing required payment fields in data:", data);
+      return NextResponse.json({ error: "Invalid webhook data" }, { status: 400 });
+    }
 
-      if (status === "success") {
-        // Insert or update subscription record in your DB
-        await db
-          .insert(userSubscription)
-          .values({
-            userId,
+    const txRef: string = data.tx_ref;
+    const status: string = data.status;
+    const paidAt = new Date(data.updated_at);
+
+    const userId = txRef.split("-")[1];
+    if (!userId) {
+      console.error("❌ Invalid tx_ref format:", txRef);
+      return NextResponse.json({ error: "Invalid tx_ref" }, { status: 400 });
+    }
+
+    if (status === "success") {
+      await db
+        .insert(userSubscription)
+        .values({
+          userId,
+          chapaTxRef: txRef,
+          chapaPaymentStatus: "paid",
+          chapaPaymentTime: paidAt,
+        })
+        .onConflictDoUpdate({
+          target: userSubscription.userId,
+          set: {
             chapaTxRef: txRef,
             chapaPaymentStatus: "paid",
             chapaPaymentTime: paidAt,
-          })
-          .onConflictDoUpdate({
-            target: userSubscription.userId,
-            set: {
-              chapaTxRef: txRef,
-              chapaPaymentStatus: "paid",
-              chapaPaymentTime: paidAt,
-            },
-          });
+          },
+        });
 
-        return NextResponse.json({ success: true });
-      }
+      console.log(`✅ Payment recorded for user ${userId}`);
+      return NextResponse.json({ success: true });
     }
 
-    // For other events or if no action needed
+    console.log("ℹ️ Payment not marked as success:", status);
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Webhook processing error:", error);
+    console.error("❌ Webhook processing error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
