@@ -1,4 +1,3 @@
-import { UpgradeButton } from "@/components/checkoutbutton";
 import { Button } from "@/components/ui/button";
 import { ClerkLoaded, ClerkLoading, SignIn, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton, } from "@clerk/nextjs"
 import { Loader } from "lucide-react";
@@ -16,7 +15,6 @@ export default function Home() {
       <div className="flex flex-col gap-y-8 items-center">
         <h1 className="text-xl lg:text-3xl font-bold text-neutral-600 text-center  max-w-[480px]">Learn, Practice and Master New Languages With Lingo.</h1>
 
-        <UpgradeButton />
         <div className="flex flex-col items-center gap-y-3 max-w-[330px] w-full">
 
           <ClerkLoading >
