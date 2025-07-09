@@ -1,4 +1,4 @@
-const CHAPA_SECRET_KEY = process.env.CHAPA_SECRET_KEY!;
+const TEST_SECRET_KEY = process.env.TEST_SECRET_KEY!;
 
 export const createChapaCheckoutSession = async ({
   amount,
@@ -20,7 +20,7 @@ export const createChapaCheckoutSession = async ({
   const res = await fetch("https://api.chapa.co/v1/transaction/initialize", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${CHAPA_SECRET_KEY}`,
+      Authorization: `Bearer ${TEST_SECRET_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
