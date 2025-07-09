@@ -2,7 +2,7 @@ import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
 
 const adminIds = [
-  "user_2z3YkI1U0XKymhqWEmTpHDhhIsV",
+  "user_2zdUUTaeLRFVhrUXxoNuRNCwvoy",
 ];
 
 const isProtectedRoute = createRouteMatcher(

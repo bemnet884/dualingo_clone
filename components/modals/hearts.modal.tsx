@@ -16,7 +16,7 @@ const HeartsModal = () => {
 
   const onClick = () => {
     close();
-    router.push('/store')
+    router.push('/shop') // store -> shop
   }
 
   if (!isClient) { return null };
