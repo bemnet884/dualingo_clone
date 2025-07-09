@@ -5,7 +5,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { createChapaCheckoutSession } from "@/lib/chapa";
 import { absoluteUrl } from "@/lib/utils";
 
-export const createChapaUrl = async () => {
+export const createChapaUrl = async (): Promise<string> => {
   const { userId } = await auth();
   const user = await currentUser();
 
@@ -29,5 +29,5 @@ export const createChapaUrl = async () => {
     return_url,
   });
 
-  return { data: chapaUrl };
+  return chapaUrl; // ✅ just return the string directly
 };
