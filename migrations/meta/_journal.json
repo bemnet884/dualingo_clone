@@ -8,6 +8,13 @@
       "when": 1751099600789,
       "tag": "0000_majestic_lightspeed",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1752225311984,
+      "tag": "0001_fine_power_man",
+      "breakpoints": true
     }
   ]
 }

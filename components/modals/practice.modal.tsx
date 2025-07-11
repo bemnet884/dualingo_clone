@@ -27,7 +27,7 @@ const PracticeModal = () => {
             />
           </div>
           <DialogTitle className="text-center font-bold text-2xl">
-            Practive Lesson
+            Practice Lesson
           </DialogTitle>
           <DialogDescription className="text-center text-base">
             Use practice lessons to regain hearts and points. You can not loose hearts or points in practice lessons.

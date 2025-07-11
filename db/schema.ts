@@ -80,7 +80,7 @@ export const challengeOptionsRelations = relations(challengeOptions, ({ one }) =
 
 export const challengeProgress = pgTable("challenge_progress", {
   id: serial("id").primaryKey(),
-  userId: text("user_id").notNull(), // TODO: Confirm this doesn't break
+  userId: text("user_id").notNull(),
   challengeId: integer("challenge_id").references(() => challenges.id, { onDelete: "cascade" }).notNull(),
   completed: boolean("completed").notNull().default(false),
 });
@@ -113,7 +113,7 @@ export const userSubscription = pgTable("user_subscription", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull().unique(),
   chapaTxRef: text("chapa_tx_ref").notNull().unique(), // unique transaction ref
-  chapaPaymentStatus: text("chapa_payment_status").notNull(), // e.g., "paid", "pending"
+  chapaPaymentStatus: text("chapa_payment_status").notNull(), // "paid", "pending"
   chapaPaymentTime: timestamp("chapa_payment_time").notNull(), // time Chapa confirmed payment
 });
 

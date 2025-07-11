@@ -1,4 +1,3 @@
-// actions/user-subscription.ts
 "use server";
 
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -17,7 +16,7 @@ export const createChapaUrl = async (): Promise<string> => {
   const first_name = user.firstName || "User";
   const last_name = user.lastName || "Name";
 
-  const tx_ref = `tx-${userId}-${Date.now()}`; // unique transaction ref
+  const tx_ref = `tx-${userId}-${Date.now()}`;
   const return_url = absoluteUrl("/shop");
 
   const chapaUrl = await createChapaCheckoutSession({
@@ -29,5 +28,5 @@ export const createChapaUrl = async (): Promise<string> => {
     return_url,
   });
 
-  return chapaUrl; // ✅ just return the string directly
+  return chapaUrl;
 };

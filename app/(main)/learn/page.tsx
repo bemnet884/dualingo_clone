@@ -23,7 +23,7 @@ const Learn = async () => {
     courseProgressData,
     lessonPercentageData,
     userSubscriptionData
-  ])
+  ]);
 
   if (!userProgress || !userProgress.activeCourseId) {
     redirect('/courses')

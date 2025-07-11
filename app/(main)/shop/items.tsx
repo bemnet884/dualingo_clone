@@ -4,7 +4,6 @@ import { refillHearts } from "@/actions/user-progress"
 import { createChapaUrl } from "@/actions/user-subscription"
 import { Button } from "@/components/ui/button"
 import { POINTS_TO_REFILL } from "@/constants"
-import { point } from "drizzle-orm/pg-core"
 import Image from "next/image"
 import { useTransition } from "react"
 import { toast } from "sonner"
@@ -24,14 +23,15 @@ const ShopItems = ({
   const [pending, startTransition] = useTransition();
 
 
+  // purhcase hearts
   const onRefillHearts = () => {
     if (pending || hearts === 5 || points < POINTS_TO_REFILL) { return; }
 
     startTransition(() => {
-      refillHearts().catch(() => toast.error("Something went wrong from shopitems "))
+      refillHearts().catch(() => toast.error("Something went wrong when purchasing hearts "))
     })
   }
-
+  // subscribe to pro
   const onUpgrade = () => {
     startTransition(() => {
       createChapaUrl()
@@ -41,7 +41,7 @@ const ShopItems = ({
             window.location.href = checkoutUrl;
           }
         })
-        .catch(() => toast.error("Something went wrong from shopitems (chapa)"));
+        .catch(() => toast.error("Something went wrong whene redirecting to cahpa"));
     });
   };
 
@@ -56,13 +56,16 @@ const ShopItems = ({
           height={60}
         />
         <div className="flex-1">
-          <p className="text-neutral-700 text-base lg:text-xl font-bold">Refill hearts</p>
+          <p className="text-neutral-700 text-base lg:text-xl font-bold">Purchase hearts</p>
         </div>
 
         <Button
-          disabled={pending
+          disabled={
+            pending
             || hearts === 5
-            || points < POINTS_TO_REFILL}
+            || points < POINTS_TO_REFILL
+            || hasActiveSubscription // when user is in subscription no need to purchase hears because they alredy have unlimited hearts
+          }
           onClick={onRefillHearts}>
           {hearts === 5 ? "full" : (
             <div className="flex items-center">
